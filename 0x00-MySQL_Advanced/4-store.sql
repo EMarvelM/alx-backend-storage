@@ -1,11 +1,13 @@
--- create a trigger that decrease the quantity of an item after adding a new order
+-- Script to create a trigger that automatically updates the quantity in 'items' table when a new order is placed
 DELIMITER $$
 
-CREATE TRIGGER decrease_qty
+CREATE TRIGGER decrease_item_quantity
 AFTER INSERT ON orders
 FOR EACH ROW
 BEGIN
-    UPDATE items SET quantity = quantity - NEW.number WHERE item_name=NEW.item_name;
+    UPDATE items
+    SET quantity = quantity - NEW.number
+    WHERE name = NEW.item_name;
 END$$
 
 DELIMITER ;
