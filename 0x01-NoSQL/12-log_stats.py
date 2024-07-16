@@ -4,6 +4,7 @@
 
 from pymongo import MongoClient
 
+
 def main():
     connection = MongoClient('mongodb://127.0.0.1:27017')
     nginx_collection = connection.logs.nginx
@@ -19,11 +20,11 @@ def main():
                 get_satus += 1
             methods[log["method"]] += 1
 
-
     for method in methods:
         print('    method {}: {:d}'.format(method, methods[method]))
 
     print('{} status check'.format(get_satus))
+
 
 if __name__ == "__main__":
     main()
