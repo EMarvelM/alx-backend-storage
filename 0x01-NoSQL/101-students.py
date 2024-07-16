@@ -19,7 +19,7 @@ def top_students(mongo_collection):
     students = mongo_collection.find({})
     for student in students:
         topics = student.get("topics", [])
-        average = sum(i['score'] for i in topics) / len(topics)
+        average = sum(i['score'] for i in topics) / len(topics) if topics else 0
         student['averageScore'] = average
         result.append(student)
 
