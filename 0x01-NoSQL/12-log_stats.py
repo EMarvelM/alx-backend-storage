@@ -21,6 +21,6 @@ if __name__ == "__main__":
             methods[log["method"]] += 1
 
     for method in methods:
-        print('    method {}: {:d}'.format(method, methods[method]))
+        print('\tmethod {}: {:d}'.format(method, methods[method]))
 
     print('{} status check'.format(get_satus))
