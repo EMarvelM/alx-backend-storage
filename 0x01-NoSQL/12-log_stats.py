@@ -24,4 +24,3 @@ if __name__ == "__main__":
         print('    method {}: {:d}'.format(method, methods[method]))
 
     print('{} status check'.format(get_satus))
-
