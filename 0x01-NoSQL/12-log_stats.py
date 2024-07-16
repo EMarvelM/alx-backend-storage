@@ -20,6 +20,6 @@ for log in logs:
 
 
 for method in methods:
-    print('\tmethod {}: {:d}'.format(method, methods[method]))
+    print('    method {}: {:d}'.format(method, methods[method]))
 
 print('{} status check'.format(get_satus))
