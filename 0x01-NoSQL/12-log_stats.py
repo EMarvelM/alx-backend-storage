@@ -5,7 +5,7 @@
 from pymongo import MongoClient
 
 
-def main():
+if __name__ == "__main__":
     connection = MongoClient('mongodb://127.0.0.1:27017')
     nginx_collection = connection.logs.nginx
     logs = nginx_collection.find({})
@@ -25,6 +25,3 @@ def main():
 
     print('{} status check'.format(get_satus))
 
-
-if __name__ == "__main__":
-    main()
