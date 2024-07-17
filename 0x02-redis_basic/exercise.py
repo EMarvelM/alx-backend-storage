@@ -1,7 +1,8 @@
-""" This module contains the implementation of the Cache class.
-"""
 import redis
 from uuid import uuid4
+
+""" This module contains the implementation of the Cache class.
+"""
 
 
 class Cache:
@@ -12,13 +13,13 @@ class Cache:
         """
         Initializes the Redis connection.
         """
-        self._redis = redis.Redis()
+        self._redis: redis.Redis = redis.Redis()
         self._redis.flushdb()
 
     def store(self, data: bytes) -> str:
         """
         Stores the data in Redis under a unique UUID and returns the UUID.
         """
-        id = str(uuid4())
+        id: str = str(uuid4())
         self._redis.set(id, data)
         return id
