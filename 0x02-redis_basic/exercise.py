@@ -1,8 +1,7 @@
-import redis
-from uuid import uuid4
-
 """ This module contains the implementation of the Cache class.
 """
+import redis
+from uuid import uuid4
 
 
 class Cache:
