@@ -6,9 +6,11 @@ from uuid import uuid4
 
 class Cache:
     """
+    A class that stores data in Redis
     """
     def __init__(self) -> None:
         """
+        Initializes the Redis connection.
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
