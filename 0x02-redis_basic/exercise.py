@@ -2,6 +2,7 @@
 """
 import redis
 from uuid import uuid4
+from typing import Union
 
 
 class Cache:
@@ -15,9 +16,15 @@ class Cache:
         self._redis: redis.Redis = redis.Redis()
         self._redis.flushdb()
 
-    def store(self, data: bytes) -> str:
+    def store(self, data: Union[str, bytes, int, float]) -> str:
         """
-        Stores the data in Redis under a unique UUID and returns the UUID.
+        Store data in Redis using a randomly generated key.
+
+        Args:
+            data (Union[str, bytes, int, float]): The data to store.
+
+        Returns:
+            str: The key under which the data is stored.
         """
         id: str = str(uuid4())
         self._redis.set(id, data)
