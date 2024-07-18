@@ -4,6 +4,16 @@
 import redis
 from uuid import uuid4
 from typing import Union, Callable
+from functools import wraps
+
+
+def count_calls(method: Callable):
+    @wraps(method)
+    def inner(self, *args, **kwds):
+        key = method.__qualname__
+        self._redis.incr(key)
+        return method(*args, **kwds)
+    return inner
 
 
 class Cache:
