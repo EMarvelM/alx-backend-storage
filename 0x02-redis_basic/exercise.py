@@ -8,12 +8,14 @@ from functools import wraps
 
 
 def count_calls(method: Callable):
+    """ A decorator that increments a Redis key each time a method is called.
+    """
     @wraps(method)
-    def inner(self, *args, **kwds):
-        key = method.__qualname__
-        self._redis.incr(key)
-        return method(*args, **kwds)
-    return inner
+    def wrapper(self, *args, **kwargs):
+        key = f"count:{method.__qualname__}"
+        self._redis.incr(key)  # Increment the method call count in Redis
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
@@ -27,6 +29,7 @@ class Cache:
         self._redis: redis.Redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Store data in Redis using a randomly generated key.
