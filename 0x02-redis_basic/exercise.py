@@ -3,7 +3,7 @@
 """
 import redis
 from uuid import uuid4
-from typing import Union
+from typing import Union, Callable
 
 
 class Cache:
@@ -30,3 +30,45 @@ class Cache:
         id: str = str(uuid4())
         self._redis.mset({id: data})
         return id
+
+    def get(self, key: str, fn: Callable= None) -> Union[str, float, int, None]:
+        """
+        Retrieve data from Redis by key and convert it using a given function.
+
+        Args:
+            key (str): The key for the data to retrieve.
+            fn (Callable, optional): A function to convert the data from bytes.
+
+        Returns:
+            Union[bytes, str, int, None]: The retrieved and converted data, or None if the key doesn't exist.
+        """
+        data = self._redis.get(key)
+        if data:
+            data = fn(data)
+        
+        return data
+
+    def get_str(self, key: str) -> Union[str, None]:
+        """
+        Retrieve a string value from Redis.
+
+        Args:
+            key (str): The key for the data to retrieve.
+
+        Returns:
+            Union[str, None]: The string data, or None if the key doesn't exist.
+
+        """
+        return self.get(key, lambda b: b.decode('utf-8'))
+    
+    def get_int(self, key: str) -> Union[int, None]:
+        """
+        Retrieve an integer value from Redis.
+
+        Args:
+            key (str): The key for the data to retrieve.
+
+        Returns:
+            Union[int, None]: The integer data, or None if the key doesn't exist.
+        """
+        return self.get(key, int)
