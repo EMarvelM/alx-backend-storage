@@ -28,5 +28,5 @@ class Cache:
             str: The key under which the data is stored.
         """
         id: str = str(uuid4())
-        self._redis.set(id, data)
+        self._redis.mset({id: data})
         return id
