@@ -23,9 +23,9 @@ def call_history(method: Callable):
     """
     @wraps(method)
     def inner(self, *args, **kwargs):
-        self._redis.rpush(f"{method.__qualname__}:input", str(args))
+        self._redis.rpush(f"{method.__qualname__}:inputs", str(args))
         key = method(self, *args, **kwargs)
-        self._redis.rpush(f"{method.__qualname__}:output", str(key))
+        self._redis.rpush(f"{method.__qualname__}:outputs", str(key))
         return key
     return inner
 
