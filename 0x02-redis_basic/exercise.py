@@ -69,7 +69,7 @@ class Cache:
             Union[bytes, str, int, None]: The retrieved and converted data, or None if the key doesn't exist.
         """
         data = self._redis.get(key)
-        if data:
+        if data and fn:
             data = fn(data)
         
         return data
