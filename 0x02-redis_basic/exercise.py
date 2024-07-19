@@ -12,10 +12,22 @@ def count_calls(method: Callable):
     """
     @wraps(method)
     def wrapper(self, *args, **kwargs):
-        key = b"{}".format(method.__qualname__)
+        key = method.__qualname__
         self._redis.incr(key)  # Increment the method call count in Redis
         return method(self, *args, **kwargs)
     return wrapper
+
+
+def call_history(method: Callable):
+    """ A decorator that adds to the end of a list
+    """
+    @wraps(method)
+    def inner(self, *args, **kwargs):
+        self._redis.rpush(f"{method.__qualname__}:input", str(args))
+        key = method(self, *args, **kwargs)
+        self._redis.rpush(f"{method.__qualname__}:output", str(key))
+        return key
+    return inner
 
 
 class Cache:
