@@ -7,27 +7,19 @@ import redis
 from functools import wraps
 
 
-def count_history(method):
+def count_history(fn):
     """ A decorator that increments a Redis key each time a method is called.
     """
-    @wraps(method)
-    def wrapper(url, *args, **kwargs):
-        result = method(url, *args, **kwargs)
-        _redis = redis.Redis()
-
-        before = _redis.get(f"count:{url}")
-        if not before:
-            before = 0
-        else:
-            before = int(before.decode("utf-8"))
-
-        print(f"count:{url}")
-
-        _redis.set(f"count:{url}", int(before + 1))
-        _redis.set(f"cache:{url}", result)
-
-        _redis.expire(f"cache:{url}", 10)
-        return result
+    @wraps(fn)
+    def wrapper(url):
+        """ Wrapper for decorator guy """
+        redis.incr(f"count:{url}")
+        cached_response = redis.get(f"cached:{url}")
+        if cached_response:
+            return cached_response.decode('utf-8')
+        result = fn(url)
+        redis.setex(f"cached:{url}", 10, result)
+    
     return wrapper
 
 
