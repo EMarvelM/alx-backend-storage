@@ -98,3 +98,16 @@ class Cache:
             Union[int, None]: The integer data, or None if the key doesn't exist.
         """
         return self.get(key, int)
+
+
+def replay(fn):
+    """
+    """
+    _redis = redis.Redis()
+    inputs = _redis.lrange(f"{fn.__qualname__}:inputs", 0, -1)
+    outputs = _redis.lrange(f"{fn.__qualname__}:outputs",0 , -1)
+
+    i = 0
+    for inp, outp in zip(inputs, outputs):
+        print(f"{fn.__qualname__}(*{inputs[i].decode('utf-8')}) -> {outputs[i].decode('utf-8')}")
+        i += 1
