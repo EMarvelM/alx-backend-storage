@@ -26,7 +26,6 @@ def count_history(method):
         _redis.set(f"count:{url}", int(before + 1))
         _redis.set(f"cache:{url}", result)
 
-        _redis.expire(f"count:{url}", 10)
         _redis.expire(f"cache:{url}", 10)
         return result
     return wrapper
