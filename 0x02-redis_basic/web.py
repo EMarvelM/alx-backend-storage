@@ -1,34 +1,42 @@
 #!/usr/bin/env python3
-""" expiring web cache module """
-
-import redis
+""" This module contains a function that fetches a web page and stores the
+    number of times the page has been fetched in a Redis database.
+"""
 import requests
-from typing import Callable
+import redis
 from functools import wraps
 
-redis = redis.Redis()
 
-
-def wrap_requests(fn: Callable) -> Callable:
-    """ Decorator wrapper """
-
-    @wraps(fn)
+def count_history(method):
+    """ A decorator that increments a Redis key each time a method is called.
+    """
+    @wraps(method)
     def wrapper(url):
-        """ Wrapper for decorator guy """
-        redis.incr(f"count:{url}")
-        cached_response = redis.get(f"cached:{url}")
-        if cached_response:
-            return cached_response.decode('utf-8')
-        result = fn(url)
-        redis.setex(f"cached:{url}", 10, result)
-        return result
+        _redis = redis.Redis()
 
+        before = _redis.get(f"count:{url}")
+        if not before:
+            before = 0
+        else:
+            before = int(before.decode("utf-8"))
+
+        _redis.set(f"count:{url}", int(before + 1))
+
+        res = _redis.get(f"cache:{url}")
+        if res:
+            return res.decode("utf-8")
+        
+        result = method(url)
+        _redis.set(f"cache:{url}", result)
+        _redis.expire(f"cache:{url}", 10)
+        return result
+    
     return wrapper
 
 
-@wrap_requests
+@count_history
 def get_page(url: str) -> str:
-    """get page self descriptive
+    """ Fetch a web page and return its content.
     """
-    response = requests.get(url)
-    return response.text
+    res = requests.get(url)
+    return res.text
