@@ -25,12 +25,12 @@ def count_history(method):
         res = _redis.get(f"cache:{url}")
         if res:
             return res.decode("utf-8")
-        
+
         result = method(url)
         _redis.set(f"cache:{url}", result)
         _redis.expire(f"cache:{url}", 10)
         return result
-    
+
     return wrapper
 
 
