@@ -7,7 +7,7 @@ from typing import Union, Callable
 from functools import wraps
 
 
-def count_calls(method: Callable):
+def count_calls(method: Callable) -> Callable:
     """ A decorator that increments a Redis key each time a method is called.
     """
     @wraps(method)
