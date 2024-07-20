@@ -57,7 +57,8 @@ class Cache:
         self._redis.mset({id: data})
         return id
 
-    def get(self, key: str, fn: Callable= None) -> Union[str, float, int, None]:
+    def get(self, key: str, fn: Callable = None) -> \
+            Union[str, float, int, None]:
         """
         Retrieve data from Redis by key and convert it using a given function.
 
@@ -66,12 +67,13 @@ class Cache:
             fn (Callable, optional): A function to convert the data from bytes.
 
         Returns:
-            Union[bytes, str, int, None]: The retrieved and converted data, or None if the key doesn't exist.
+            Union[bytes, str, int, None]: The retrieved and converted data,
+            or None if the key doesn't exist.
         """
         data = self._redis.get(key)
         if data and fn:
             data = fn(data)
-        
+
         return data
 
     def get_str(self, key: str) -> Union[str, None]:
@@ -82,11 +84,12 @@ class Cache:
             key (str): The key for the data to retrieve.
 
         Returns:
-            Union[str, None]: The string data, or None if the key doesn't exist.
+            Union[str, None]: The string data, or None if
+            the key doesn't exist.
 
         """
         return self.get(key, lambda b: b.decode('utf-8'))
-    
+
     def get_int(self, key: str) -> Union[int, None]:
         """
         Retrieve an integer value from Redis.
@@ -95,7 +98,8 @@ class Cache:
             key (str): The key for the data to retrieve.
 
         Returns:
-            Union[int, None]: The integer data, or None if the key doesn't exist.
+            Union[int, None]: The integer data, or
+            None if the key doesn't exist.
         """
         return self.get(key, int)
 
@@ -105,9 +109,10 @@ def replay(fn):
     """
     _redis = redis.Redis()
     inputs = _redis.lrange(f"{fn.__qualname__}:inputs", 0, -1)
-    outputs = _redis.lrange(f"{fn.__qualname__}:outputs",0 , -1)
+    outputs = _redis.lrange(f"{fn.__qualname__}:outputs", 0, -1)
 
-    i = 0
-    for inp, outp in zip(inputs, outputs):
-        print(f"{fn.__qualname__}(*{inputs[i].decode('utf-8')}) -> {outputs[i].decode('utf-8')}")
-        i += 1
+    inputs = [i.decode('utf-8') for i in inputs]
+    outputs = [i.decode('utf-8') for i in outputs]
+
+    for inp, outp, i in zip(inputs, outputs, range(len(inputs))):
+        print(f"{fn.__qualname__}(*{inputs[i]}) -> {outputs[i]}")
