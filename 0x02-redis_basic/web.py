@@ -38,14 +38,3 @@ def get_page(url: str) -> str:
     """
     res = requests.get(url)
     return res.text
-
-
-# Example usage
-# if __name__ == "__main__":
-#     url = "http://google.com"
-#     content = get_page(url)
-
-#     _redis = redis.Redis()
-#     print(_redis.get(f"count:{url}"))
-
-    # print(content)  # This should print the content of the webpage
