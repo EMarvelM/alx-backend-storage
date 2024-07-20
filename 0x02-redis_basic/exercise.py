@@ -114,5 +114,6 @@ def replay(fn):
     inputs = [i.decode('utf-8') for i in inputs]
     outputs = [i.decode('utf-8') for i in outputs]
 
+    print(f"{fn.__qualname__} was called {len(inputs)} times:")
     for inp, outp, i in zip(inputs, outputs, range(len(inputs))):
         print(f"{fn.__qualname__}(*{inputs[i]}) -> {outputs[i]}")
