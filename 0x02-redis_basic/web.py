@@ -14,13 +14,20 @@ def count_history(method):
     def wrapper(url, *args, **kwargs):
         result = method(url, *args, **kwargs)
         _redis = redis.Redis()
+
         before = _redis.get(f"count:{url}")
+        if not before:
+            before = 0
+        else:
+            before = int(before.decode("utf-8"))
+
         print(f"count:{url}")
-        _redis.set(f"count:{url}",
-                   int(before.decode('utf-8')) + 1 if before else 1)
+
+        _redis.set(f"count:{url}", int(before + 1))
         _redis.set(f"cache:{url}", result)
-        _redis.expire(f"cache:{url}", 10)
+
         _redis.expire(f"count:{url}", 10)
+        _redis.expire(f"cache:{url}", 10)
         return result
     return wrapper
 
@@ -34,11 +41,11 @@ def get_page(url: str) -> str:
 
 
 # Example usage
-if __name__ == "__main__":
-    url = "http://google.com"
-    content = get_page(url)
+# if __name__ == "__main__":
+#     url = "http://google.com"
+#     content = get_page(url)
 
-    _redis = redis.Redis()
-    print(_redis.get(f"count:{url}"))
+#     _redis = redis.Redis()
+#     print(_redis.get(f"count:{url}"))
 
     # print(content)  # This should print the content of the webpage
