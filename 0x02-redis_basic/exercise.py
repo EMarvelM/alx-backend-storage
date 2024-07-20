@@ -18,13 +18,13 @@ def count_calls(method: Callable):
     return wrapper
 
 
-def call_history(method: Callable):
+def call_history(method: Callable) -> Callable:
     """ A decorator that adds to the end of a list
     """
     @wraps(method)
-    def inner(self, *args, **kwargs):
+    def inner(self, *args, **kwargs) -> str:
         self._redis.rpush(f"{method.__qualname__}:inputs", str(args))
-        key = method(self, *args, **kwargs)
+        key: str = method(self, *args, **kwargs)
         self._redis.rpush(f"{method.__qualname__}:outputs", str(key))
         return key
     return inner
